@@ -1,0 +1,84 @@
+graph TB
+    subgraph Clients
+        REST["REST Client"]
+        GraphQL["GraphQL Client"]
+        USSD["USSD Client"]
+    end
+
+    subgraph Entry["Entry Points"]
+        MS["Main Server<br/>(cmd/server)"]
+        USSDM["USSD Server<br/>(cmd/ussd)"]
+    end
+
+    subgraph API["API Layer"]
+        Routes["API Routes"]
+        Mid["Middleware<br/>(logging, auth)"]
+        GQLRes["GraphQL Resolvers"]
+    end
+
+    subgraph Core["Core Modules"]
+        direction TB
+        subgraph Auth["Authentication"]
+            AH["Handlers"]
+            AS["Services"]
+            AM["Models"]
+        end
+        
+        subgraph Wallet["Wallet Management"]
+            WH["Handlers"]
+            WS["Services"]
+            WM["Models"]
+        end
+        
+        subgraph Trans["Transactions"]
+            TH["Handlers"]
+            TS["Services"]
+            TM["Models"]
+        end
+        
+        subgraph Block["Blockchain"]
+            BC["Clients"]
+            BS["Services"]
+        end
+        
+        subgraph Notif["Notifications"]
+            NH["Handlers"]
+            NS["Services"]
+        end
+    end
+
+    subgraph Utils["Utility Layer"]
+        USSDP["USSD Package<br/>(session, menu)"]
+        DBP["Database Package"]
+        NetP["Network Package"]
+        UtilP["Utilities<br/>(encryption, validation)"]
+    end
+
+    %% Client connections
+    REST --> MS
+    GraphQL --> MS
+    USSD --> USSDM
+
+    %% Entry to API
+    MS --> Routes
+    USSDM --> Routes
+    Routes --> Mid
+    Mid --> GQLRes
+
+    %% API to Core
+    Mid --> Auth
+    Mid --> Wallet
+    Mid --> Trans
+    Mid --> Block
+    Mid --> Notif
+
+    %% Core to Utils
+    Auth --> DBP
+    Wallet --> DBP
+    Trans --> DBP
+    Block --> NetP
+    Notif --> NetP
+
+    %% USSD specific
+    USSDM --> USSDP
+    USSDP --> DBP

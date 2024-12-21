@@ -1,56 +1,96 @@
 crypto_wallet_api/
 ├── cmd/
 │   ├── server/
-│   │   ├── main.go  # Entry point for the application
-│   └── ussd/
-│       ├── main.go  # USSD-specific entry point (if separate server required)
+│   │   ├── main.go           # Entry point for REST, GraphQL, and USSD servers
+│   ├── ussd/
+│   │   ├── main.go           # USSD-specific entry point for testing or deployment
 ├── configs/
-│   ├── app_config.yaml  # Application configuration file
-│   └── secrets.env       # Environment secrets (gitignored)
+│   ├── app_config.yaml       # Application configuration file
+│   └── secrets.env           # Environment secrets (gitignored)
 ├── internal/
 │   ├── auth/
-│   │   ├── handlers.go   # Handlers for authentication endpoints
-│   │   ├── middleware.go # Authentication middleware
-│   │   ├── models.go     # Models for user and authentication
-│   │   └── services.go   # Authentication-related business logic
+│   │   ├── handlers.go       # REST handlers for authentication
+│   │   ├── resolvers.go      # GraphQL resolvers for authentication
+│   │   ├── ussd_handlers.go  # USSD handlers for authentication
+│   │   ├── schema.graphql    # GraphQL schema for authentication
+│   │   ├── models.go         # Models for user and authentication
+│   │   └── services.go       # Authentication-related business logic
 │   ├── wallet/
-│   │   ├── handlers.go   # Wallet endpoints handlers
-│   │   ├── models.go     # Models for wallet and related entities
-│   │   ├── services.go   # Business logic for wallets
-│   │   └── utils.go      # Wallet utility functions
+│   │   ├── handlers.go       # REST handlers for wallets
+│   │   ├── resolvers.go      # GraphQL resolvers for wallets
+│   │   ├── ussd_handlers.go  # USSD handlers for wallets
+│   │   ├── schema.graphql    # GraphQL schema for wallets
+│   │   ├── models.go         # Models for wallets
+│   │   ├── services.go       # Wallet-related business logic
+│   │   └── utils.go          # Wallet utilities
 │   ├── transactions/
-│   │   ├── handlers.go   # Handlers for transaction-related endpoints
-│   │   ├── models.go     # Models for transactions
-│   │   └── services.go   # Transaction-related logic
+│   │   ├── handlers.go       # REST handlers for transactions
+│   │   ├── resolvers.go      # GraphQL resolvers for transactions
+│   │   ├── ussd_handlers.go  # USSD handlers for transactions
+│   │   ├── schema.graphql    # GraphQL schema for transactions
+│   │   ├── models.go         # Models for transactions
+│   │   └── services.go       # Business logic for transactions
 │   ├── blockchain/
-│   │   ├── clients.go    # Blockchain interaction clients (e.g., Ethereum, Bitcoin)
-│   │   ├── services.go   # Blockchain-specific operations
+│   │   ├── clients.go        # Blockchain clients (e.g., Ethereum, Bitcoin)
+│   │   ├── resolvers.go      # GraphQL resolvers for blockchain data
+│   │   ├── ussd_handlers.go  # USSD handlers for blockchain data
+│   │   ├── schema.graphql    # GraphQL schema for blockchain
+│   │   └── services.go       # Blockchain-specific operations
 │   └── notifications/
-│       ├── handlers.go   # Handlers for notifications
-│       ├── services.go   # Notification services
-│       └── utils.go      # Notification utilities
-├── pkg/
-│   ├── utils/
-│   │   ├── encryption.go # Utility functions for encryption
-│   │   ├── validation.go # Utility functions for request validation
-│   │   └── logger.go     # Logging utilities
-│   ├── database/
-│   │   ├── db.go         # Database initialization and connection
-│   │   └── migrations/   # Database migration files
-│   └── network/
-│       ├── rest_client.go # HTTP client for external REST APIs
-│       └── ussd_client.go # USSD network communication logic
+│       ├── handlers.go       # REST handlers for notifications
+│       ├── resolvers.go      # GraphQL resolvers for notifications
+│       ├── ussd_handlers.go  # USSD handlers for notifications
+│       ├── schema.graphql    # GraphQL schema for notifications
+│       ├── services.go       # Notification services
+│       └── utils.go          # Notification utilities
+├── proto/                    # Folder for .proto files
+│   ├── auth.proto
+│   ├── wallet.proto
+│   ├── transaction.proto
+│   └── user_management.proto
 ├── api/
 │   ├── docs/
-│   │   └── swagger.yaml  # API documentation
-│   ├── routes.go         # API routing setup
-│   └── middleware.go     # General middleware (e.g., logging, CORS)
+│   │   └── swagger.yaml      # API documentation for REST
+│   ├── routes.go             # Central API routing (REST, USSD, GraphQL)
+│   ├── graphql/
+│   │   ├── resolvers.go      # Central resolver registry for GraphQL
+│   │   └── schema.graphql    # Root GraphQL schema
+│   └── middleware.go         # Middleware (e.g., logging, authentication)
+├── pkg/
+│   ├── ussd/
+│   │   ├── session_manager.go # Handles USSD sessions
+│   │   ├── menu.go            # Dynamic USSD menu generation
+│   │   ├── utils.go           # Helper utilities for USSD
+│   │   └── validation.go      # Input validation for USSD requests
+│   ├── utils/
+│   │   ├── encryption.go      # Utility functions for encryption
+│   │   ├── validation.go      # Request validation
+│   │   └── logger.go          # Logging utilities
+│   ├── database/
+│   │   ├── db.go              # Database initialization and connection
+│   │   └── migrations/        # Database migration files
+│   └── network/
+│       ├── ussd_client.go     # USSD-specific network client
+│       ├── rest_client.go     # REST client for external APIs
+│       └── graphql_client.go  # GraphQL client for external APIs
+├── gen/                      # Folder for generated gRPC code
+│   ├── go/
+│   │   ├── auth.pb.go
+│   │   ├── auth_grpc.pb.go
+│   │   ├── wallet.pb.go
+│   │   ├── wallet_grpc.pb.go
+│   │   ├── transaction.pb.go
+│   │   ├── transaction_grpc.pb.go
+│   │   └── user_management.pb.go
 ├── tests/
-│   ├── auth_tests.go     # Unit tests for authentication
-│   ├── wallet_tests.go   # Unit tests for wallets
-│   ├── transaction_tests.go # Unit tests for transactions
-│   └── integration/      # Integration tests
-├── Makefile              # Commands for building, testing, running the app
-├── go.mod                # Go module file
-├── go.sum                # Dependencies checksum
-└── README.md             # Project overview and instructions
+│   ├── auth_tests.go         # Unit tests for authentication
+│   ├── wallet_tests.go       # Unit tests for wallets
+│   ├── transaction_tests.go  # Unit tests for transactions
+│   ├── graphql_tests.go      # Unit tests for GraphQL queries/mutations
+│   ├── ussd_tests.go         # Unit tests for USSD interactions
+│   └── integration/          # Integration tests
+├── Makefile                  # Build, test, and run commands
+├── go.mod                    # Go module file
+├── go.sum                    # Dependency checksums
+├── protoc-gen.sh             # Script for generating gRPC stubs
+└── README.md                 # Project overview
