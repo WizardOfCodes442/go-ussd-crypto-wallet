@@ -1,0 +1,8 @@
+app_name: "CryptoWalletAPI"
+server_port: "8080"
+database_url: "postgres://user:password@localhost:5432/crypto_wallet"
+auth_service: "localhost:50051"   #grpc endpoint for authentication 
+wallet_service: "localhost:50052"  #grpc endpoint for wallet service 
+transaction_service: "localhost:50053" #grpc endpoints for interactingwith transaction service
+jwt_secret: "myjwtsecret"
+environment: "development"
